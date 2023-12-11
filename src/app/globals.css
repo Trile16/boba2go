@@ -10,18 +10,18 @@ section.frontPage {
 input[type="email"],
 input[type="password"],
 input[type="text"] {
-  @apply block w-full my-4 rounded-xl;
+  @apply block w-full my-2 rounded-xl;
   @apply border p-2 border-gray-200 bg-gray-100;
 }
 
-input[type="email"]:disbaled,
-input[type="password"]:disbaled,
-input[type="text"]:disbaled {
-  @apply bg-gray-300;
+input[type="email"]:disabled,
+input[type="password"]:disabled,
+input[type="text"]:disabled {
+  @apply bg-gray-300 border-0 cursor-not-allowed text-gray-500;
 }
 
 button {
-  @apply block w-full my-4 rounded-xl;
+  @apply block w-full rounded-xl;
   @apply border border-gray-200 rounded-xl px-6 py-2;
 }
 

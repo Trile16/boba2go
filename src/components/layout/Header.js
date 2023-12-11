@@ -2,15 +2,25 @@
 import Link from "next/link";
 import UserIcon from "../icons/UserIcon";
 import { signOut, useSession } from "next-auth/react";
+import { useState, useEffect } from "react";
 
 export default function Header() {
   const session = useSession();
   console.log(session);
-  const userData = session.data?.user;
-  let userName = userData?.name || userData?.email;
+  const [userName, setUserName] = useState(
+    session.data?.user?.name || session.data?.user?.email
+  );
+
   if (userName?.includes(" ")) {
-    userName = userName.split(" ")[0];
+    setUserName(userName.split(" ")[0]);
   }
+
+  useEffect(() => {
+    setUserName(session?.data?.user?.name);
+    if (userName?.includes(" ")) {
+      setUserName(userName.split(" ")[0]);
+    }
+  }, [session]);
 
   return (
     <header className="flex items-center justify-between mb-8">
