@@ -4,14 +4,12 @@ import { useSession } from "next-auth/react";
 import { redirect } from "next/navigation";
 import Image from "next/image";
 import { useEffect, useState } from "react";
+import toast from "react-hot-toast";
 
 export default function Profile() {
   const session = useSession();
   const { status } = session;
   const [userName, setUserName] = useState(session?.data?.user?.name || "");
-  const [isSaved, setIsSaved] = useState(false);
-  const [isSaving, setIsSaving] = useState(false);
-  const [isUploading, setIsUploading] = useState(false);
   const [image, setImage] = useState("");
   console.log({ session });
 
@@ -22,8 +20,9 @@ export default function Profile() {
 
   async function handleProfileInfoSubmit(ev) {
     ev.preventDefault();
-    setIsSaved(false);
-    setIsSaving(true);
+
+    const toastLoading = toast.loading("Saving Profile...");
+
     const response = await fetch("api/profile", {
       method: "PUT",
       headers: {
@@ -31,26 +30,40 @@ export default function Profile() {
       },
       body: JSON.stringify({ name: userName, image }),
     });
-    setIsSaving(false);
+
+    toast.dismiss(toastLoading);
+
     if (response.ok) {
-      setIsSaved(true);
+      toast.success("Profile Saved!");
+    } else {
+      toast.error("Error Saving Profile...");
     }
   }
 
   async function handleFileChange(ev) {
-    setIsUploading(true);
     const files = ev.target?.files;
     if (files?.length === 1) {
       const data = new FormData();
       data.set("file", files[0]);
-      const response = await fetch("/api/upload", {
+
+      const uploadPromise = fetch("/api/upload", {
         method: "POST",
         body: data,
+      }).then((response) => {
+        if (response.ok) {
+          return response.json().then((link) => {
+            setImage(link);
+          });
+        }
+        throw new Error("Something went bad...");
       });
-      const link = await response.json();
-      setImage(link);
+
+      await toast.promise(uploadPromise, {
+        loading: "Uploading...",
+        success: "Upload Complete!",
+        error: "Error Uploading File...",
+      });
     }
-    setIsUploading(false);
   }
 
   if (status === "loading") {
@@ -68,17 +81,17 @@ export default function Profile() {
       </h1>
       {isSaved && (
         <div className="text-center p-4 mx-auto border bg-green-300 max-w-md my-1 rounded-lg border-green-500">
-          <h2>Profile Saved!</h2>
+          Profile Saved!
         </div>
       )}
       {isSaving && (
         <div className="text-center p-4 mx-auto border bg-gray-300 max-w-md my-1 rounded-lg border-gray-500">
-          <h2>Saving...</h2>
+          Saving...
         </div>
       )}
       {isUploading && (
         <div className="text-center p-4 mx-auto border bg-gray-300 max-w-md my-1 rounded-lg border-gray-500">
-          <h2>Uploading...</h2>
+          Uploading...
         </div>
       )}
       <div className="max-w-md mx-auto">

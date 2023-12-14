@@ -2,6 +2,7 @@ import { Poppins } from "next/font/google";
 import { AppProvider } from "@/components/AppContext";
 import "./globals.css";
 import Header from "../components/layout/Header";
+import { Toaster } from "react-hot-toast";
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -19,6 +20,7 @@ export default function RootLayout({ children }) {
       <body className={poppins.className}>
         <main className="max-w-5xl mx-auto p-12 bg-white min-h-screen">
           <AppProvider>
+            <Toaster />
             <Header />
             {children}
             <footer className="border-t p-8 text-center mt-16 text-secondary-1">
