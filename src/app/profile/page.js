@@ -1,10 +1,11 @@
 "use client";
 import { useSession } from "next-auth/react";
-
 import { redirect } from "next/navigation";
 import Image from "next/image";
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import toast from "react-hot-toast";
+import UserTabs from "../../components/layout/UserTabs";
 
 export default function Profile() {
   const session = useSession();
@@ -15,7 +16,10 @@ export default function Profile() {
   const [city, setCity] = useState("");
   const [zipCode, setZipCode] = useState("");
   const [country, setCountry] = useState("");
+  const [admin, setAdmin] = useState("");
   const [image, setImage] = useState("");
+  const [isFetched, setIsFetched] = useState(false);
+
   console.log({ session });
 
   useEffect(() => {
@@ -23,11 +27,14 @@ export default function Profile() {
     setImage(session?.data?.user?.image);
     fetch("api/profile").then((response) => {
       response.json().then((data) => {
+        console.log(data);
         setPhone(data.phone);
         setStreetAddress(data.streetAddress);
         setCity(data.city);
         setZipCode(data.zipCode);
         setCountry(data.country);
+        setAdmin(data.admin);
+        setIsFetched(true);
       });
     });
   }, [session, status]);
@@ -88,7 +95,7 @@ export default function Profile() {
     }
   }
 
-  if (status === "loading") {
+  if (status === "loading" || !isFetched) {
     return "Loading...";
   }
 
@@ -98,11 +105,10 @@ export default function Profile() {
 
   return (
     <section className="mt-8">
-      <h1 className="text-4xl text-center  text-primary font-semibold uppercase">
-        Profile
-      </h1>
+      <UserTabs admin={admin} />
+
       <div className="max-w-md mx-auto">
-        <div className="flex gap-2 items-center ">
+        <div className="flex flex-col gap-2 items-center">
           <div>
             {image && (
               <Image
