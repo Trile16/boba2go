@@ -6,7 +6,7 @@ import { useProfile } from "@/components/UseProfile";
 import toast from "react-hot-toast";
 
 export default function Categories() {
-  const { isLoaded: profileLoading, data: profileData } = useProfile();
+  const { isLoaded: profileLoaded, data: profileData } = useProfile();
   const [categories, setCategories] = useState([]);
   const [categoryName, setCategoryName] = useState("");
   const [editedCategory, setEditedCategory] = useState(null);
@@ -24,8 +24,7 @@ export default function Categories() {
     });
   }
 
-  console.log(categories, "CATEGORIES!!!");
-  if (!profileLoading) {
+  if (!profileLoaded) {
     return "Loading Information....";
   }
 
