@@ -10,6 +10,9 @@ import clientPromise from "@/libs/mongoConnect";
 export const authOptions = {
   secret: process.env.SECRET,
   adapter: MongoDBAdapter(clientPromise),
+  session: {
+    strategy: "jwt",
+  },
   providers: [
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID,
@@ -38,10 +41,14 @@ export const authOptions = {
         // e.g. return { id: 1, name: 'J Smith', email: 'jsmith@example.com' }
         // You can also use the `req` object to obtain additional parameters
         // (i.e., the request IP address)
+        console.log(credentials);
         const { email, password } = credentials;
 
         mongoose.connect(process.env.MONGO_URL);
         const user = await User.findOne({ email });
+
+        console.log(user);
+
         const goodPassword = bcrypt.compareSync(password, user.password);
 
         if (goodPassword) {

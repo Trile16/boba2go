@@ -61,7 +61,11 @@ export default function NewMenuItem() {
           <RightArrow />
         </Link>
       </div>
-      <MenuItemForm menuItem={null} onSubmit={handleFormSubmit} />
+      <MenuItemForm
+        menuItem={null}
+        onSubmit={handleFormSubmit}
+        type={"create"}
+      />
     </section>
   );
 }

@@ -73,7 +73,12 @@ export default function EditMenuItem() {
           <RightArrow />
         </Link>
       </div>
-      <MenuItemForm menuItem={menuItem} onSubmit={handleFormSubmit} />
+      <MenuItemForm
+        menuItem={menuItem}
+        onSubmit={handleFormSubmit}
+        type={"edit"}
+        setRedirectToMenuItems={setRedirectToMenuItems}
+      />
     </section>
   );
 }

@@ -1,24 +1,52 @@
 import { useState, useEffect } from "react";
 import EditableImage from "@/components/layout/EditableImage";
 import MenuItemPriceProps from "@/components/layout/MenuItemsPriceProps";
+import toast from "react-hot-toast";
 
-export default function MenuItemForm({ menuItem, onSubmit }) {
+export default function MenuItemForm({
+  menuItem,
+  onSubmit,
+  type,
+  setRedirectToMenuItems,
+}) {
   console.log(menuItem);
   const [image, setImage] = useState(menuItem?.image || "");
   const [name, setName] = useState(menuItem?.name || "");
   const [description, setDescription] = useState(menuItem?.description || "");
   const [basePrice, setBasePrice] = useState(menuItem?.basePrice || "");
-  const [sizes, setSizes] = useState([]);
-  const [toppings, setToppings] = useState([]);
+  const [sizes, setSizes] = useState(menuItem?.sizes || []);
+  const [toppings, setToppings] = useState(menuItem?.toppings || []);
 
   useEffect(() => {
     setImage(menuItem?.image);
     setName(menuItem?.name);
     setDescription(menuItem?.description);
     setBasePrice(menuItem?.basePrice);
-    setSizes(menuItem?.sizes);
-    setToppings(menuItem?.toppings);
+    setSizes(menuItem?.sizes || []);
+    setToppings(menuItem?.toppings || []);
   }, [menuItem]);
+
+  async function handleMenuItemDelete() {
+    const promise = new Promise(async (resolve, reject) => {
+      const response = await fetch(`/api/menuitems?_id=${menuItem._id}`, {
+        method: "DELETE",
+      });
+
+      if (response.ok) {
+        resolve();
+      } else {
+        reject();
+      }
+    });
+
+    await toast.promise(promise, {
+      loading: "Deleting Item...",
+      success: "Item Successfully Deleted!",
+      error: "Error Deleting Item...",
+    });
+
+    setRedirectToMenuItems(true);
+  }
 
   return (
     <form
@@ -66,6 +94,13 @@ export default function MenuItemForm({ menuItem, onSubmit }) {
             setProps={setToppings}
           />
           <button type="submit">Save</button>
+          {type === "edit" && (
+            <div className="mt-2">
+              <button type="button" onClick={() => handleMenuItemDelete()}>
+                Delete Menu Item
+              </button>
+            </div>
+          )}
         </div>
       </div>
     </form>
